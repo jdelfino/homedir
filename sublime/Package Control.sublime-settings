@@ -1,0 +1,14 @@
+{
+	"installed_packages":
+	[
+		"All Autocomplete",
+		"Git",
+		"GitGutter",
+		"Github Tools",
+		"SFTP",
+		"sublemacspro",
+		"SublimeLinter",
+		"SublimeLinter-pylint",
+		"TrailingSpaces"
+	]
+}

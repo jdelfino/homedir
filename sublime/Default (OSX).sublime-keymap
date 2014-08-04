@@ -1,0 +1,5 @@
+[
+	{ "keys": ["ctrl+shift+_"], "command": "undo" },
+	{ "keys": ["ctrl+x", "ctrl+s"], "command": "save" },
+
+]

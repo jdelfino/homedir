@@ -1,0 +1,18 @@
+<snippet>
+	<content><![CDATA[
+#include <string>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main(int argc, char** argv){
+
+	return 0;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<!-- <tabTrigger>hello</tabTrigger> -->
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

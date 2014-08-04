@@ -1,0 +1,17 @@
+<snippet>
+	<content><![CDATA[
+import fileinput
+
+def main():
+	fi = fileinput.input()
+
+	ntests = int(fi.readline())
+
+	for test in range(ntest):
+		line = fi.readline().strip()
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>codechef</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.python</scope>
+</snippet>

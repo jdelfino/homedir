@@ -1,0 +1,9 @@
+{
+	"color_scheme": "Packages/User/Monokai (SL).tmTheme",
+	"default_line_ending": "unix",
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"Vintage"
+	]
+}

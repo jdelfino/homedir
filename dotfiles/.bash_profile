@@ -15,11 +15,6 @@ alias ctaw='ssh $TAW' # Connect TA Wiki
 source ~/custom_prompt.sh
 source ~/.profile
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-export PATH=/usr/local/bin:$PATH
-
-
-
 #infinio stuff
 export IDEV=jdelfino-dev.infinio.com
 alias cinf='ssh $IDEV'

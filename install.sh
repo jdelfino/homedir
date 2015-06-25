@@ -8,7 +8,7 @@ dotdir=$dir/dotfiles              # dotfiles directory
 olddir=${HOME}/dotfiles_old             # old dotfiles backup directory
 sublime_dir="${HOME}/Library/Application Support/Sublime Text 3/Packages/User"
 sublime_backup_dir=~/sublime_user_backup
-
+# this is a dumb change
 ##########
 
 # create dotfiles_old in homedir

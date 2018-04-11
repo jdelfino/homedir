@@ -35,8 +35,10 @@ git_prompt ()
 
 kube_prompt ()
 {
-  kc=$(kubectl config current-context)
-  echo "$kc"
+  if [[ $(type -P "kubectl") ]]; then
+    kc=$(kubectl config current-context)
+    echo "$kc"
+  fi
 }
 
 function prompt_command {

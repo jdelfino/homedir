@@ -33,6 +33,12 @@ git_prompt ()
   echo "$git_color$git_branch${c_reset}"
 }
 
+kube_prompt ()
+{
+  kc=$(kubectl config current-context)
+  echo "$kc"
+}
+
 function prompt_command {
 
 TERMWIDTH=${COLUMNS}
@@ -40,13 +46,8 @@ TERMWIDTH=${COLUMNS}
 usernam=$(whoami)
 newPWD="${PWD}"
 
-virtualenv="${VIRTUAL_ENV_NAME}"
-if [ "${virtualenv}" == "" ]
-then
-    context="$(git_prompt)"
-else
-    context="${virtualenv}"
-fi
+git_context="$(git_prompt)"
+kube_context="$(kube_prompt)"
 
 newPWD="$(echo -n $newPWD | sed -e "s|/Users/jdelfino/dev/proj/$virtualenv/|\.\.\./|")"
 
@@ -56,12 +57,12 @@ case "$hostnam" in
     *) hostnam=@$hostnam ;;
 esac
 
-let promptsize=$(echo -n "--(${usernam}@${hostnam})-(${context})--($newPWD)--" \
+let promptsize=$(echo -n "--(${usernam}@${hostnam})-(${kube_context})-(${git_context})--($newPWD)--" \
                  | wc -c | tr -d " ")
 let fillsize=${TERMWIDTH}-${promptsize}
 fill=""
-while [ "$fillsize" -gt "0" ] 
-do 
+while [ "$fillsize" -gt "0" ]
+do
     fill="${fill}-"
 	let fillsize=${fillsize}-1
 done
@@ -92,7 +93,6 @@ local BLUE="\[\033[0;34m\]"
 hostnam=$(echo -n $HOSTNAME)
 case "$hostnam" in
     jdelfino-laptop*) PROMPT_COLOR=$GREEN ;;
-    *.p.echonest.net) PROMPT_COLOR=$PURPLE ;;
     *) PROMPT_COLOR=$BLUE ;;
 esac
 
@@ -108,7 +108,8 @@ esac
 PS1="$TITLEBAR\
 ${PROMPT_COLOR}-${WHITE}-(${PROMPT_COLOR}\${usernam}${PROMPT_COLOR}\${hostnam}${WHITE})-\
 ${PROMPT_COLOR}-\${fill}\
-${WHITE}-(${PROMPT_COLOR}\$context${WHITE})-\
+${WHITE}-(${PROMPT_COLOR}\$kube_context${WHITE})-\
+${WHITE}(${PROMPT_COLOR}\$git_context${WHITE})-\
 ${WHITE}(${PROMPT_COLOR}\${newPWD}${WHITE})-\
 ${PROMPT_COLOR}-\
 \n\

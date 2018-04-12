@@ -1,20 +1,10 @@
 #!/bin/bash
 
-#   termwide prompt with tty number
-#      by Giles - created 2 November 98
-#
-#      $Revision: 1.2 $   $Author: giles $
-#      $Source: /home/giles/.bashprompt/bashthemes/RCS/twtty,v $
-#      $Log: twtty,v $
-#      Revision 1.2  1999/03/25 01:37:51  giles
-#
-#      Revision 1.1  1999/03/25 01:35:26  giles
-#      Initial revision
-#
-#     This is a variant on "termwide" that incorporates the tty number.
-#
-#     24 March 99 - use of sed with \{$cut\} where $cut is an integer
-#     means that this probably now requires a GNU version of sed.
+# The hostname for your personal computer, used to color remote prompts differently
+PERSONAL_HOSTNAME="jdelfino-laptop"
+# Set this to the parent dir of your git checkouts. It will be dropped to keep the prompt dir
+# shorter when you are inside a checkout.
+CODE_ROOT="/canopy"
 
 git_prompt ()
 {
@@ -42,72 +32,65 @@ kube_prompt ()
 }
 
 function prompt_command {
+  TERMWIDTH=${COLUMNS}
 
-TERMWIDTH=${COLUMNS}
+  usernam=$(whoami)
+  newPWD="${PWD}"
 
-usernam=$(whoami)
-newPWD="${PWD}"
+  git_context="$(git_prompt)"
+  kube_context="$(kube_prompt)"
 
-git_context="$(git_prompt)"
-kube_context="$(kube_prompt)"
+  newPWD="$(echo -n $newPWD | sed -E -e "s|$CODE_ROOT/([^/]*)/?|\1//|")"
 
-newPWD="$(echo -n $newPWD | sed -e "s|/Users/jdelfino/dev/proj/$virtualenv/|\.\.\./|")"
-
-hostnam=$(echo -n $HOSTNAME)
-case "$hostnam" in
-    jdelfino-laptop*) hostnam="" ;;
+  hostnam=$(echo -n $HOSTNAME)
+  case "$hostnam" in
+    ${PERSONAL_HOSTNAME}*) hostnam="" ;;
     *) hostnam=@$hostnam ;;
-esac
+  esac
 
-let promptsize=$(echo -n "--(${usernam}@${hostnam})-(${kube_context})-(${git_context})--($newPWD)--" \
-                 | wc -c | tr -d " ")
-let fillsize=${TERMWIDTH}-${promptsize}
-fill=""
-while [ "$fillsize" -gt "0" ]
-do
+  let promptsize=$(echo -n "--(${usernam}@${hostnam})-(${kube_context})-(${git_context})--($newPWD)--" \
+                   | wc -c | tr -d " ")
+  let fillsize=${TERMWIDTH}-${promptsize}
+  fill=""
+  while [ "$fillsize" -gt "0" ]; do
     fill="${fill}-"
-	let fillsize=${fillsize}-1
-done
+  	let fillsize=${fillsize}-1
+  done
 
-if [ "$fillsize" -lt "0" ]
-then
-   let cut=3-${fillsize}
-	newPWD="...$(echo -n $newPWD | sed -e "s/\(^.\{$cut\}\)\(.*\)/\2/")"
-fi
-
+  if [ "$fillsize" -lt "0" ]; then
+    let cut=3-${fillsize}
+  	newPWD="...$(echo -n $newPWD | sed -e "s/\(^.\{$cut\}\)\(.*\)/\2/")"
+  fi
 }
 
 PROMPT_COMMAND=prompt_command
 
 function twtty {
+  local WHITE="\[\033[1;37m\]"
+  local YELLOW="\[\033[0;32m\]"
+  local NO_COLOUR="\[\033[0m\]"
+  local CYAN="\[\033[0;36m\]"
+  local LIGHT_CYAN="\[\033[1;36m\]"
+  local GREEN="\[\033[0;32m\]"
+  local LIGHT_GREEN="\[\033[1;32m\]"
+  local YELLOW="\[\033[1;33m\]"
+  local PURPLE="\[\033[0;35m\]"
+  local BLUE="\[\033[0;34m\]"
 
-local WHITE="\[\033[1;37m\]"
-local YELLOW="\[\033[0;32m\]"
-local NO_COLOUR="\[\033[0m\]"
-local CYAN="\[\033[0;36m\]"
-local LIGHT_CYAN="\[\033[1;36m\]"
-local GREEN="\[\033[0;32m\]"
-local LIGHT_GREEN="\[\033[1;32m\]"
-local YELLOW="\[\033[1;33m\]"
-local PURPLE="\[\033[0;35m\]"
-local BLUE="\[\033[0;34m\]"
-
-hostnam=$(echo -n $HOSTNAME)
-case "$hostnam" in
-    jdelfino-laptop*) PROMPT_COLOR=$GREEN ;;
+  hostnam=$(echo -n $HOSTNAME)
+  case "$hostnam" in
+    ${PERSONAL_HOSTNAME}*) PROMPT_COLOR=$GREEN ;;
     *) PROMPT_COLOR=$BLUE ;;
-esac
+  esac
 
-case $TERM in
+  case $TERM in
     xterm*)
-        TITLEBAR='\[\033]0;\u@\h:\w\007\]'
-        ;;
+      TITLEBAR='\[\033]0;\u@\h:\w\007\]' ;;
     *)
-        TITLEBAR=""
-        ;;
-esac
+      TITLEBAR="" ;;
+  esac
 
-PS1="$TITLEBAR\
+  PS1="$TITLEBAR\
 ${PROMPT_COLOR}-${WHITE}-(${PROMPT_COLOR}\${usernam}${PROMPT_COLOR}\${hostnam}${WHITE})-\
 ${PROMPT_COLOR}-\${fill}\
 ${WHITE}-(${PROMPT_COLOR}\$kube_context${WHITE})-\
@@ -118,8 +101,6 @@ ${PROMPT_COLOR}-\
 ${PROMPT_COLOR}-- $(date +%H:%M)${WHITE} ${WHITE}\$${WHITE}\
 ${NO_COLOUR} "
 
-PS2="$WHITE-$YELLOW-$YELLOW-$NO_COLOUR "
-
+  PS2="$WHITE-$YELLOW-$YELLOW-$NO_COLOUR "
 }
-
 twtty

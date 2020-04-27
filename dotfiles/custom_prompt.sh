@@ -26,9 +26,17 @@ git_prompt ()
 kube_prompt ()
 {
   if [[ $(type -P "kubectl") ]]; then
-    kc=$(kubectl config current-context)
+    kc=$(kubectl config current-context \
+      | sed "s/gke_canopy-196615_\(.*\)_/\1:/" \
+      | sed "s/gke_canodevcave_\(.*\)_/\1:/" \
+      | sed "s/us[^:]*://")
     echo "$kc"
   fi
+}
+
+virtualenv_prompt ()
+{
+  echo "${VIRTUAL_ENV}" | sed "s/.*\///"
 }
 
 function prompt_command {
@@ -39,6 +47,7 @@ function prompt_command {
 
   git_context="$(git_prompt)"
   kube_context="$(kube_prompt)"
+  virtualenv_context="$(virtualenv_prompt)"
 
   newPWD="$(echo -n $newPWD | sed -E -e "s|$CODE_ROOT/([^/]*)/?|\1//|")"
 
@@ -48,7 +57,7 @@ function prompt_command {
     *) hostnam=@$hostnam ;;
   esac
 
-  let promptsize=$(echo -n "--(${usernam}@${hostnam})-(${kube_context})-(${git_context})--($newPWD)--" \
+  let promptsize=$(echo -n "--(${usernam}@${hostnam})-(${kube_context})-($virtualenv_context)-(${git_context})--($newPWD)--" \
                    | wc -c | tr -d " ")
   let fillsize=${TERMWIDTH}-${promptsize}
   fill=""
@@ -61,6 +70,7 @@ function prompt_command {
     let cut=3-${fillsize}
   	newPWD="...$(echo -n $newPWD | sed -e "s/\(^.\{$cut\}\)\(.*\)/\2/")"
   fi
+  dat=$(date +%H:%M)
 }
 
 PROMPT_COMMAND=prompt_command
@@ -93,12 +103,13 @@ function twtty {
   PS1="$TITLEBAR\
 ${PROMPT_COLOR}-${WHITE}-(${PROMPT_COLOR}\${usernam}${PROMPT_COLOR}\${hostnam}${WHITE})-\
 ${PROMPT_COLOR}-\${fill}\
-${WHITE}-(${PROMPT_COLOR}\$kube_context${WHITE})-\
-${WHITE}(${PROMPT_COLOR}\$git_context${WHITE})-\
+${WHITE}-(${CYAN}\$kube_context${WHITE})-\
+${WHITE}(${LIGHT_GREEN}\$virtualenv_context${WHITE})-\
+${WHITE}(${YELLOW}\$git_context${WHITE})-\
 ${WHITE}(${PROMPT_COLOR}\${newPWD}${WHITE})-\
 ${PROMPT_COLOR}-\
 \n\
-${PROMPT_COLOR}-- $(date +%H:%M)${WHITE} ${WHITE}\$${WHITE}\
+${PROMPT_COLOR}-- \${dat}${WHITE} ${WHITE}\$${WHITE}\
 ${NO_COLOUR} "
 
   PS2="$WHITE-$YELLOW-$YELLOW-$NO_COLOUR "
